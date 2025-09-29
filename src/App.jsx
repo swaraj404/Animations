@@ -1,15 +1,19 @@
 import gsap from "gsap";
 import { ScrollTrigger,SplitText } from "gsap/all";
-gsap.registerPlugin(ScrollTrigger, SplitText);
-
+import Navbar from "./components/Navbar";
+import Hero from "./components/Hero";
+import { navLinks } from "/home/swaraj/Practice /Animations/LandingPage/constants";
 import React from "react";
 
+gsap.registerPlugin(ScrollTrigger, SplitText);
 const App = () => {
   return (
-    <div className="flex-center h-[100vh]">
-         <h1 className="text-3xl text-orange-500">Hello, World!</h1>
-    </div>
- 
+   <main>
+    <Navbar/>
+    <Hero/>
+    <div className="h-dvh bg-black"/>
+   </main>
+
   );
 };
 
