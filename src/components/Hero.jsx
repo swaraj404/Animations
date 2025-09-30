@@ -98,6 +98,7 @@ const Hero = () => {
             </div>
           </div>
         </div>
+        
       </section>
       <div className="video absolute inset-0">
         <video
