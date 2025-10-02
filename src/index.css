@@ -58,6 +58,33 @@ body {
     mask-position: center;
     mask-size: 50%;
 }
+/* Mobile Performance Optimizations */
+@media (max-width: 767px) {
+  /* Force hardware acceleration */
+  * {
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+  }
+  
+  /* Optimize animations */
+  .will-change-transform {
+    will-change: transform;
+  }
+  
+  /* Optimize images */
+  img {
+    -webkit-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0);
+  }
+  
+  /* Optimize video performance */
+  video {
+    -webkit-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0);
+  }
+}
 
 @layer components {
     main {
