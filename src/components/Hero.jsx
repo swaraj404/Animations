@@ -1,36 +1,16 @@
 import gsap from "gsap";
-import { SplitText, ScrollTrigger } from "gsap/all";
+import { SplitText } from "gsap/all";
 import { useGSAP } from "@gsap/react";
-import { useRef, useEffect } from "react";
-import { useMediaQuery } from "react-responsive";
-
-gsap.config({
-  force3D: true,
-  nullTargetWarn: false,
-});
+import { use, useRef } from "react";
+import { toQuery, useMediaQuery } from "react-responsive";
 
 const Hero = () => {
   const videoref = useRef();
+
   const isMobile = useMediaQuery({ maxWidth: 767 });
-
-  // Configure GSAP for mobile performance
-  useEffect(() => {
-    if (isMobile) {
-      gsap.config({ autoRound: false });
-      ScrollTrigger.config({
-        autoRefreshEvents: "visibilitychange,DOMContentLoaded,load",
-        ignoreMobileResize: true
-      });
-    }
-  }, [isMobile]);
   useGSAP(() => {
-    // Mobile performance settings
-    if (isMobile) {
-      gsap.set("*", { force3D: true });
-    }
-
-    const heroSplit = new SplitText(".title", { type: "chars,words" });
-    const paragraphSplit = new SplitText(".subtitle", { type: "lines" });
+    const heroSplit = new SplitText(".title", { type: "chars,words" }); // here we split the word into characters and words animate them separately
+    const paragraphSplit = new SplitText(".subtitle", { type: "lines" }); // here we split the paragraph into lines to animate them separately
     heroSplit.chars.forEach((char) => char.classList.add("text-gradient"));
 
     gsap.from(heroSplit.chars, {
@@ -38,7 +18,6 @@ const Hero = () => {
       duration: 1.8,
       ease: "expo.out",
       stagger: 0.06,
-      force3D: true, // Performance optimization
     });
 
     gsap.from(paragraphSplit.lines, {
@@ -48,7 +27,6 @@ const Hero = () => {
       ease: "expo.out",
       stagger: 0.06,
       delay: 1,
-      force3D: true, // Performance optimization
     });
 
     gsap
@@ -60,10 +38,11 @@ const Hero = () => {
           scrub: true,
         },
       })
-      .to(".right-leaf", { y: 200, force3D: true }, 0)
-      .to(".left-leaf", { y: -200, force3D: true }, 0);
+      .to(".right-leaf", { y: 200 }, 0)
+      .to(".left-leaf", { y: -200 }, 0);
 
-    // Video animation with performance optimization
+      //video animation
+      //here we are animating the video based on the scroll position
     const startValue = isMobile ? "top 50%" : "center 60%";
     const endValue = isMobile ? "120% top" : "bottom top";
 
@@ -80,16 +59,7 @@ const Hero = () => {
     videoref.current.onloadedmetadata = () => {
       tl.to(videoref.current, {
         currentTime: videoref.current.duration,
-        force3D: true, // Performance optimization
       });
-    };
-  }, [isMobile]);
-
-  // Cleanup function for better memory management
-  useEffect(() => {
-    return () => {
-      ScrollTrigger.getAll().forEach(trigger => trigger.kill());
-      gsap.killTweensOf("*");
     };
   }, []);
   return (
@@ -101,18 +71,12 @@ const Hero = () => {
           src="images/hero-left-leaf.png"
           alt="left-leaf"
           className="left-leaf"
-          loading="lazy"
-          decoding="async"
-          style={{ transform: "translateZ(0)" }}
         />
 
-        <img
+        <img /*leaf image added and the positioning is done in index.css file*/
           src="images/hero-right-leaf.png"
           alt="right-leaf"
           className="right-leaf"
-          loading="lazy"
-          decoding="async"
-          style={{ transform: "translateZ(0)" }}
         />
 
         <div className="body">
@@ -142,15 +106,7 @@ const Hero = () => {
           src="/videos/output.mp4"
           muted
           playsInline
-          preload={isMobile ? "metadata" : "auto"}
-          {...(isMobile && {
-            poster: "/images/video-poster.jpg" // Add if you have a poster image
-          })}
-          style={{ 
-            willChange: "transform",
-            transform: "translateZ(0)",
-            backfaceVisibility: "hidden"
-          }} 
+          preload="auto"
         />
       </div>
     </>
