@@ -13,24 +13,8 @@ export default defineConfig({
         drop_debugger: true,
       },
     },
-    rollupOptions: {
-      output: {
-        manualChunks: (id) => {
-          if (id.includes('node_modules')) {
-            if (id.includes('react') || id.includes('react-dom')) {
-              return 'vendor';
-            }
-            if (id.includes('gsap')) {
-              return 'gsap';
-            }
-            if (id.includes('react-responsive')) {
-              return 'utils';
-            }
-            return 'vendor';
-          }
-        },
-      },
-    },
+    // Remove problematic rollupOptions for now
+    chunkSizeWarningLimit: 1000,
   },
   optimizeDeps: {
     include: ['gsap', '@gsap/react', 'react-responsive'],
