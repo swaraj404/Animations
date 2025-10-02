@@ -15,10 +15,19 @@ export default defineConfig({
     },
     rollupOptions: {
       output: {
-        manualChunks: {
-          vendor: ['react', 'react-dom'],
-          gsap: ['gsap', '@gsap/react'],
-          utils: ['react-responsive']
+        manualChunks: (id) => {
+          if (id.includes('node_modules')) {
+            if (id.includes('react') || id.includes('react-dom')) {
+              return 'vendor';
+            }
+            if (id.includes('gsap')) {
+              return 'gsap';
+            }
+            if (id.includes('react-responsive')) {
+              return 'utils';
+            }
+            return 'vendor';
+          }
         },
       },
     },
