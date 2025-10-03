@@ -2,6 +2,8 @@ import gsap from "gsap"
 import { useGSAP } from "@gsap/react"
 import { navLinks } from "../../constants/index.js"
 import { use } from "react"
+import { ScrollTrigger } from "gsap/all"
+import { useRef } from "react"
 
 const Navbar = () => {
   useGSAP(() => {
@@ -10,10 +12,20 @@ const Navbar = () => {
         trigger: "nav",
         start: "bottom top",}
     });
-    navTween.fromTo("nav", {backgroundColor: "transparent"},
-       {backgroundColor: '#00000050', backgroundFilter: 'blur(20px)', duration: 1,
-        ease: 'power1.inout'
-       });
+    navTween.fromTo("nav", {
+    backgroundColor: "rgba(0,0,0,0)",
+    backdropFilter: "blur(0px) saturate(100%)",
+    WebkitBackdropFilter: "blur(0px) saturate(100%)", // Safari
+    boxShadow: "0 0 0 rgba(0,0,0,0)",
+  },
+  {
+    backgroundColor: "rgba(0,0,0,0.30)",              // ~#0000004D
+    backdropFilter: "blur(8px) saturate(160%)",
+    WebkitBackdropFilter: "blur(8px) saturate(160%)",
+    boxShadow: "0 8px 32px rgba(0,0,0,0.25)",
+    duration: 0.6,
+    ease: "power2.out",
+  });
     })
 
   return (
