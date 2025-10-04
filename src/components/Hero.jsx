@@ -3,6 +3,7 @@ import { SplitText } from "gsap/all";
 import { useGSAP } from "@gsap/react";
 import { use, useRef, useState, useEffect } from "react";
 import { toQuery, useMediaQuery } from "react-responsive";
+import SimpleMobileBackground from "./SimpleMobileBackground";
 
 const Hero = () => {
   const videoref = useRef();
@@ -59,24 +60,20 @@ const Hero = () => {
         .to(".left-leaf", { y: -200 }, 0);
     }
 
-    // Optimize video animation for mobile
-    if (videoLoaded) {
-      const startValue = isMobile ? "top 70%" : "center 60%";
-      const endValue = isMobile ? "150% top" : "bottom top";
-      const shouldPin = !isMobile;
-
+    // Desktop video animation only
+    if (videoLoaded && !isMobile) {
       const tl = gsap.timeline({
         scrollTrigger: {
           trigger: "video",
-          start: startValue,
-          end: endValue,
-          scrub: isMobile ? 2 : true,
-          pin: shouldPin,
-          anticipatePin: shouldPin ? 1 : 0,
+          start: "center 60%",
+          end: "bottom top",
+          scrub: true,
+          pin: true,
+          anticipatePin: 1,
         },
       });
 
-      if (videoref.current && !isMobile) {
+      if (videoref.current) {
         tl.to(videoref.current, {
           currentTime: videoref.current.duration,
         });
@@ -143,17 +140,23 @@ const Hero = () => {
         </div>
         
       </section>
-      <div className="video absolute inset-0">
-        <video
-          ref={videoref}
-          src="/videos/output.mp4"
-          muted
-          playsInline
-          preload={isMobile ? "none" : "auto"}
-          poster="/images/hero-placeholder.jpg"
-          className="will-change-transform"
-        />
-      </div>
+      
+      {/* Desktop Video */}
+      {!isMobile && (
+        <div className="video absolute inset-0">
+          <video
+            ref={videoref}
+            src="/videos/output.mp4"
+            muted
+            playsInline
+            preload="auto"
+            className="will-change-transform"
+          />
+        </div>
+      )}
+      
+      {/* Mobile Alternative Background */}
+      {isMobile && <SimpleMobileBackground />}
     </>
   );
 };

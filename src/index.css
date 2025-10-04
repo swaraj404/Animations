@@ -261,6 +261,160 @@ body {
         .video {
             pointer-events: none;
         }
+        
+        /* Simple Mobile Background - Ultra Smooth */
+        .simple-mobile-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+            transform: translate3d(0, 0, 0);
+        }
+        
+        .bg-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            transform: translate3d(0, 0, 0);
+        }
+        
+        .mobile-static-image {
+            width: 100%;
+            height: 50vh;
+            object-fit: cover;
+            object-position: center bottom;
+            opacity: 0.6;
+            filter: brightness(0.7) contrast(1.1);
+            transform: scale(1.05) translate3d(0, 0, 0);
+            transition: opacity 0.5s ease;
+        }
+        
+        .animated-overlay {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                135deg,
+                rgba(0, 0, 0, 0.8) 0%,
+                rgba(231, 211, 147, 0.15) 35%,
+                rgba(0, 0, 0, 0.9) 65%,
+                rgba(231, 211, 147, 0.1) 100%
+            );
+            animation: overlayPulse 12s ease-in-out infinite;
+            transform: translate3d(0, 0, 0);
+        }
+        
+        @keyframes overlayPulse {
+            0%, 100% { 
+                opacity: 0.8;
+                background: linear-gradient(
+                    135deg,
+                    rgba(0, 0, 0, 0.8) 0%,
+                    rgba(231, 211, 147, 0.15) 35%,
+                    rgba(0, 0, 0, 0.9) 65%,
+                    rgba(231, 211, 147, 0.1) 100%
+                );
+            }
+            50% { 
+                opacity: 0.9;
+                background: linear-gradient(
+                    135deg,
+                    rgba(0, 0, 0, 0.7) 0%,
+                    rgba(231, 211, 147, 0.25) 40%,
+                    rgba(0, 0, 0, 0.8) 60%,
+                    rgba(231, 211, 147, 0.2) 100%
+                );
+            }
+        }
+        
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(231, 211, 147, 0.3);
+            filter: blur(1px);
+            transform: translate3d(0, 0, 0);
+            pointer-events: none;
+        }
+        
+        .particle-1 {
+            width: 4px;
+            height: 4px;
+            top: 25%;
+            left: 15%;
+            animation: gentleFloat1 8s ease-in-out infinite;
+        }
+        
+        .particle-2 {
+            width: 6px;
+            height: 6px;
+            top: 45%;
+            right: 20%;
+            animation: gentleFloat2 10s ease-in-out infinite;
+        }
+        
+        .particle-3 {
+            width: 3px;
+            height: 3px;
+            bottom: 35%;
+            left: 70%;
+            animation: gentleFloat3 12s ease-in-out infinite;
+        }
+        
+        .particle-4 {
+            width: 5px;
+            height: 5px;
+            top: 60%;
+            left: 40%;
+            animation: gentleFloat4 14s ease-in-out infinite;
+        }
+        
+        @keyframes gentleFloat1 {
+            0%, 100% { 
+                transform: translate3d(0, 0, 0); 
+                opacity: 0.3; 
+            }
+            50% { 
+                transform: translate3d(0, -10px, 0); 
+                opacity: 0.7; 
+            }
+        }
+        
+        @keyframes gentleFloat2 {
+            0%, 100% { 
+                transform: translate3d(0, 0, 0); 
+                opacity: 0.4; 
+            }
+            50% { 
+                transform: translate3d(5px, -8px, 0); 
+                opacity: 0.8; 
+            }
+        }
+        
+        @keyframes gentleFloat3 {
+            0%, 100% { 
+                transform: translate3d(0, 0, 0); 
+                opacity: 0.2; 
+            }
+            50% { 
+                transform: translate3d(-3px, -12px, 0); 
+                opacity: 0.6; 
+            }
+        }
+        
+        @keyframes gentleFloat4 {
+            0%, 100% { 
+                transform: translate3d(0, 0, 0); 
+                opacity: 0.35; 
+            }
+            50% { 
+                transform: translate3d(8px, -6px, 0); 
+                opacity: 0.75; 
+            }
+        }
     }
 
     #cocktails {
