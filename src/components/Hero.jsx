@@ -1,67 +1,108 @@
 import gsap from "gsap";
 import { SplitText } from "gsap/all";
 import { useGSAP } from "@gsap/react";
-import { use, useRef } from "react";
+import { use, useRef, useState, useEffect } from "react";
 import { toQuery, useMediaQuery } from "react-responsive";
 
 const Hero = () => {
   const videoref = useRef();
+  const [videoLoaded, setVideoLoaded] = useState(false);
 
   const isMobile = useMediaQuery({ maxWidth: 767 });
+  const isTablet = useMediaQuery({ minWidth: 768, maxWidth: 1024 });
+  const prefersReducedMotion = useMediaQuery({ query: '(prefers-reduced-motion: reduce)' });
+
   useGSAP(() => {
-    const heroSplit = new SplitText(".title", { type: "chars,words" }); // here we split the word into characters and words animate them separately
-    const paragraphSplit = new SplitText(".subtitle", { type: "lines" }); // here we split the paragraph into lines to animate them separately
+    // Simplified animations for mobile and reduced motion
+    if (prefersReducedMotion) {
+      gsap.set(".title", { opacity: 1 });
+      gsap.set(".subtitle", { opacity: 1 });
+      return;
+    }
+
+    const heroSplit = new SplitText(".title", { type: "chars,words" });
+    const paragraphSplit = new SplitText(".subtitle", { type: "lines" });
     heroSplit.chars.forEach((char) => char.classList.add("text-gradient"));
+
+    // Reduce animation complexity on mobile
+    const animationDuration = isMobile ? 1.2 : 1.8;
+    const staggerAmount = isMobile ? 0.04 : 0.06;
 
     gsap.from(heroSplit.chars, {
       yPercent: 100,
-      duration: 1.8,
-      ease: "expo.out",
-      stagger: 0.06,
+      duration: animationDuration,
+      ease: isMobile ? "power2.out" : "expo.out",
+      stagger: staggerAmount,
     });
 
     gsap.from(paragraphSplit.lines, {
       opacity: 0,
       yPercent: 100,
-      duration: 1.8,
-      ease: "expo.out",
-      stagger: 0.06,
-      delay: 1,
+      duration: animationDuration,
+      ease: isMobile ? "power2.out" : "expo.out",
+      stagger: staggerAmount,
+      delay: isMobile ? 0.6 : 1,
     });
 
-    gsap
-      .timeline({
+    // Simplified parallax for mobile
+    if (!isMobile) {
+      gsap
+        .timeline({
+          scrollTrigger: {
+            trigger: "#hero",
+            start: "top top",
+            end: "bottom top",
+            scrub: 1,
+          },
+        })
+        .to(".right-leaf", { y: 200 }, 0)
+        .to(".left-leaf", { y: -200 }, 0);
+    }
+
+    // Optimize video animation for mobile
+    if (videoLoaded) {
+      const startValue = isMobile ? "top 70%" : "center 60%";
+      const endValue = isMobile ? "150% top" : "bottom top";
+      const shouldPin = !isMobile;
+
+      const tl = gsap.timeline({
         scrollTrigger: {
-          trigger: "#hero",
-          start: "top top",
-          end: "bottom top",
-          scrub: true,
+          trigger: "video",
+          start: startValue,
+          end: endValue,
+          scrub: isMobile ? 2 : true,
+          pin: shouldPin,
+          anticipatePin: shouldPin ? 1 : 0,
         },
-      })
-      .to(".right-leaf", { y: 200 }, 0)
-      .to(".left-leaf", { y: -200 }, 0);
-
-      //video animation
-      //here we are animating the video based on the scroll position
-    const startValue = isMobile ? "top 50%" : "center 60%";
-    const endValue = isMobile ? "120% top" : "bottom top";
-
-    const tl = gsap.timeline({
-      scrollTrigger: {
-        trigger: "video",
-        start: startValue,
-        end: endValue,
-        scrub: true,
-        pin: true,
-      },
-    });
-
-    videoref.current.onloadedmetadata = () => {
-      tl.to(videoref.current, {
-        currentTime: videoref.current.duration,
       });
-    };
-  }, []);
+
+      if (videoref.current && !isMobile) {
+        tl.to(videoref.current, {
+          currentTime: videoref.current.duration,
+        });
+      }
+    }
+  }, [videoLoaded, isMobile, prefersReducedMotion]);
+
+  useEffect(() => {
+    const video = videoref.current;
+    if (video) {
+      const handleLoadedMetadata = () => {
+        setVideoLoaded(true);
+      };
+      
+      video.addEventListener('loadedmetadata', handleLoadedMetadata);
+      
+      // Preload video only on desktop
+      if (!isMobile) {
+        video.load();
+      }
+
+      return () => {
+        video.removeEventListener('loadedmetadata', handleLoadedMetadata);
+      };
+    }
+  }, [isMobile]);
   return (
     <>
       <section id="hero" className="noisy">
@@ -71,12 +112,14 @@ const Hero = () => {
           src="images/hero-left-leaf.png"
           alt="left-leaf"
           className="left-leaf"
+          loading="eager"
         />
 
-        <img /*leaf image added and the positioning is done in index.css file*/
+        <img
           src="images/hero-right-leaf.png"
           alt="right-leaf"
           className="right-leaf"
+          loading="eager"
         />
 
         <div className="body">
@@ -106,7 +149,9 @@ const Hero = () => {
           src="/videos/output.mp4"
           muted
           playsInline
-          preload="auto"
+          preload={isMobile ? "none" : "auto"}
+          poster="/images/hero-placeholder.jpg"
+          className="will-change-transform"
         />
       </div>
     </>

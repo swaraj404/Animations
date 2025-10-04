@@ -7,23 +7,57 @@ import React from "react";
 
 const Art = () => {
     const isMobile = useMediaQuery({ maxWidth: 767 });
+    const prefersReducedMotion = useMediaQuery({ query: '(prefers-reduced-motion: reduce)' });
     
     useGSAP(() => {
-        const start = isMobile ? "top 20%" : "top top";
+        if (prefersReducedMotion) {
+            gsap.set('.will-fade', { opacity: 1 });
+            gsap.set('.masked-img', { maskSize: "400%", scale: 1.3 });
+            gsap.set('#masked-content', { opacity: 1 });
+            return;
+        }
+
+        const start = isMobile ? "top 30%" : "top top";
+        const scrubValue = isMobile ? 2.5 : 1.5;
+        const shouldPin = !isMobile;
+
         const maskTimeline = gsap.timeline({
             scrollTrigger: {
                 trigger: "#art",
                 start: start,
-                end: "bottom center",
-                scrub: 1.5,
-                pin: true,
+                end: isMobile ? "bottom 20%" : "bottom center",
+                scrub: scrubValue,
+                pin: shouldPin,
+                anticipatePin: shouldPin ? 1 : 0,
+                refreshPriority: isMobile ? -1 : 0,
             },
         });
-        maskTimeline
-         .to('.will-fade',{opacity:0, stagger:0.2, ease:"power1.inOut"},)
-         .to('.masked-img',{maskPosition:"center",scale:1.3, maskSize:"400%",duration:1, ease:"power1.inOut"})
-         .to('#masked-content',{opacity:1, duration:1, ease:"power1.inOut"} );
-    });
+
+        // Simplified animation sequence for mobile
+        if (isMobile) {
+            maskTimeline
+                .to('.will-fade', { opacity: 0, stagger: 0.1, ease: "power1.inOut" }, 0)
+                .to('.masked-img', { 
+                    maskPosition: "center", 
+                    scale: 1.2, 
+                    maskSize: "300%", 
+                    duration: 0.8, 
+                    ease: "power1.inOut" 
+                }, 0.3)
+                .to('#masked-content', { opacity: 1, duration: 0.6, ease: "power1.inOut" }, 0.8);
+        } else {
+            maskTimeline
+                .to('.will-fade', { opacity: 0, stagger: 0.2, ease: "power1.inOut" })
+                .to('.masked-img', { 
+                    maskPosition: "center", 
+                    scale: 1.3, 
+                    maskSize: "400%", 
+                    duration: 1, 
+                    ease: "power1.inOut" 
+                })
+                .to('#masked-content', { opacity: 1, duration: 1, ease: "power1.inOut" });
+        }
+    }, [isMobile, prefersReducedMotion]);
   return (
     <div id="art">
         <div className="container mx-auto h-full pt-20">
@@ -38,7 +72,12 @@ const Art = () => {
                     ))}
                 </ul>
                 <div className="cocktail-img">
-                    <img src="/images/under-img.jpg" alt="cocktail" className="abs-center masked-img size-full object-contain"/>
+                    <img 
+                        src="/images/under-img.jpg" 
+                        alt="cocktail" 
+                        className="abs-center masked-img size-full object-contain will-change-transform"
+                        loading="lazy"
+                    />
                 </div>
 
                 <ul className="space-y-4 will-fade">

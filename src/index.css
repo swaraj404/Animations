@@ -60,29 +60,77 @@ body {
 }
 /* Mobile Performance Optimizations */
 @media (max-width: 767px) {
-  /* Force hardware acceleration */
-  * {
+  /* Force hardware acceleration for critical elements */
+  .will-change-transform,
+  video,
+  .masked-img,
+  .left-leaf,
+  .right-leaf {
     -webkit-transform: translateZ(0);
     transform: translateZ(0);
     -webkit-backface-visibility: hidden;
     backface-visibility: hidden;
-  }
-  
-  /* Optimize animations */
-  .will-change-transform {
     will-change: transform;
   }
   
-  /* Optimize images */
+  /* Optimize animations for mobile */
+  * {
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+  }
+  
+  /* Reduce animation complexity */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+  
+  /* Optimize images for mobile */
   img {
     -webkit-transform: translate3d(0, 0, 0);
     transform: translate3d(0, 0, 0);
+    image-rendering: optimizeSpeed;
   }
   
   /* Optimize video performance */
   video {
     -webkit-transform: translate3d(0, 0, 0);
     transform: translate3d(0, 0, 0);
+    object-fit: cover;
+  }
+  
+  /* Reduce complexity of parallax elements */
+  .left-leaf,
+  .right-leaf {
+    transform: translate3d(0, 0, 0) !important;
+  }
+  
+  /* Optimize text rendering */
+  h1, h2, h3 {
+    text-rendering: optimizeSpeed;
+  }
+  
+  /* Improve scroll performance */
+  main {
+    -webkit-overflow-scrolling: touch;
+    overflow-x: hidden;
+  }
+  
+  /* Optimize containers for mobile */
+  .container {
+    max-width: 100% !important;
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+  }
+  
+  /* Reduce noise background on mobile */
+  .noisy::before {
+    opacity: 0.3 !important;
   }
 }
 
@@ -159,8 +207,60 @@ body {
         }
     }
 
+    /* Mobile hero layout optimizations */
+    @media (max-width: 767px) {
+        #hero {
+            min-height: 100vh;
+            overflow: hidden;
+        }
+        
+        #hero h1 {
+            margin-top: 25vh !important;
+            font-size: 4rem !important;
+            line-height: 0.8 !important;
+        }
+        
+        #hero .body {
+            top: 60vh !important;
+            bottom: auto !important;
+            padding: 0 1rem !important;
+        }
+        
+        #hero .view-cocktails {
+            max-width: 100% !important;
+            text-align: center;
+        }
+        
+        #hero .view-cocktails p {
+            font-size: 0.9rem !important;
+            line-height: 1.4 !important;
+            text-align: center !important;
+        }
+        
+        #hero .left-leaf,
+        #hero .right-leaf {
+            z-index: -1;
+            opacity: 0.7;
+        }
+    }
+
     video {
         @apply w-full md:h-[80%] h-1/2 absolute bottom-0 left-0 md:object-contain object-bottom object-cover;
+    }
+
+    /* Mobile video optimizations */
+    @media (max-width: 767px) {
+        video {
+            height: 40vh !important;
+            object-fit: cover !important;
+            object-position: center bottom !important;
+            transform: translate3d(0, 0, 0) !important;
+            will-change: transform !important;
+        }
+        
+        .video {
+            pointer-events: none;
+        }
     }
 
     #cocktails {
@@ -298,6 +398,50 @@ body {
                     @apply text-lg text-center;
                 }
             }
+        }
+    }
+
+    /* Mobile Art section optimizations */
+    @media (max-width: 767px) {
+        #art {
+            margin-top: 2rem !important;
+            padding: 1rem !important;
+            min-height: 90vh !important;
+        }
+        
+        #art h2 {
+            font-size: 3rem !important;
+            margin-bottom: 1rem !important;
+            margin-top: 2rem !important;
+        }
+        
+        #art .content {
+            margin-top: 1rem !important;
+            gap: 1rem !important;
+        }
+        
+        #art .cocktail-img {
+            height: 40vh !important;
+            width: 90% !important;
+            top: 20% !important;
+        }
+        
+        #art .masked-container h2 {
+            margin-top: 1rem !important;
+            font-size: 1.5rem !important;
+        }
+        
+        #art .masked-container div {
+            bottom: 10rem !important;
+        }
+        
+        #art .masked-container h3 {
+            font-size: 1.25rem !important;
+            width: 100% !important;
+        }
+        
+        #art .masked-container p {
+            font-size: 0.9rem !important;
         }
     }
 

@@ -1,27 +1,46 @@
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
+import { useMediaQuery } from "react-responsive";
 import { cocktailLists } from "../../constants";
 import { mockTailLists } from "../../constants";
 
 const Cocktails = () => {
-    useGSAP(() => {
-    const parallaxTimeline = gsap.timeline({
-      scrollTrigger: {
-        trigger: "#cocktails",
-        start: "top 30%", // when the top of the trigger hits the bottom of the viewport
-        end: "bottom 80%", // when the bottom of the trigger hits the top of the viewport
-        scrub: true, // smooth scrubbing, takes 1 second to "catch up" to the scrollbar
-      },
-    });
+    const isMobile = useMediaQuery({ maxWidth: 767 });
+    const prefersReducedMotion = useMediaQuery({ query: '(prefers-reduced-motion: reduce)' });
 
-    parallaxTimeline
-      .to("#c-left-leaf", { x: -100, y: 100 })
-      .to("#c-right-leaf", { x: 100, y: 100 });
-    }, []);
+    useGSAP(() => {
+        if (prefersReducedMotion || isMobile) {
+            // Disable parallax on mobile and for users who prefer reduced motion
+            return;
+        }
+
+        const parallaxTimeline = gsap.timeline({
+            scrollTrigger: {
+                trigger: "#cocktails",
+                start: "top 30%",
+                end: "bottom 80%",
+                scrub: 1.5,
+            },
+        });
+
+        parallaxTimeline
+            .to("#c-left-leaf", { x: -100, y: 100 })
+            .to("#c-right-leaf", { x: 100, y: 100 });
+    }, [isMobile, prefersReducedMotion]);
   return (
     <section id="cocktails" className="noisy">
-        <img src="images/cocktail-left-leaf.png" alt="l-leaf" id="c-left-leaf"/>
-        <img src="images/cocktail-right-leaf.png" alt="r-leaf" id="c-right-leaf"/>
+        <img 
+            src="images/cocktail-left-leaf.png" 
+            alt="l-leaf" 
+            id="c-left-leaf"
+            loading="lazy"
+        />
+        <img 
+            src="images/cocktail-right-leaf.png" 
+            alt="r-leaf" 
+            id="c-right-leaf"
+            loading="lazy"
+        />
 
         <div className="list">
             <div className="popular">

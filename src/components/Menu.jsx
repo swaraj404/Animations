@@ -3,24 +3,39 @@ import { useState, useRef } from "react";
 import { allCocktails } from "../../constants";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
+import { useMediaQuery } from "react-responsive";
 
 const Menu = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const totalCocktails = allCocktails.length;
   const contentRef = useRef();
+  const isMobile = useMediaQuery({ maxWidth: 767 });
+  const prefersReducedMotion = useMediaQuery({ query: '(prefers-reduced-motion: reduce)' });
 
    useGSAP(() => {
-	gsap.fromTo('#title', { opacity: 0 }, { opacity: 1, duration: 1 });
-	gsap.fromTo('.cocktail img', { opacity: 0, xPercent: -100 }, {
-	 xPercent: 0, opacity: 1, duration: 1, ease: 'power1.inOut'
-	})
-	gsap.fromTo('.details h2', { yPercent: 100, opacity: 0 }, {
-	 yPercent: 0, opacity: 100, ease: 'power1.inOut'
-	})
-	gsap.fromTo('.details p', { yPercent: 100, opacity: 0 }, {
-	 yPercent: 0, opacity: 100, ease: 'power1.inOut'
-	})
- }, [currentIndex]);
+    if (prefersReducedMotion) {
+      gsap.set('#title', { opacity: 1 });
+      gsap.set('.cocktail img', { opacity: 1, xPercent: 0 });
+      gsap.set('.details h2', { yPercent: 0, opacity: 1 });
+      gsap.set('.details p', { yPercent: 0, opacity: 1 });
+      return;
+    }
+
+    // Simplified animations for mobile
+    const duration = isMobile ? 0.6 : 1;
+    const ease = isMobile ? 'power2.out' : 'power1.inOut';
+
+    gsap.fromTo('#title', { opacity: 0 }, { opacity: 1, duration: duration });
+    gsap.fromTo('.cocktail img', { opacity: 0, xPercent: -50 }, {
+      xPercent: 0, opacity: 1, duration: duration, ease: ease
+    });
+    gsap.fromTo('.details h2', { yPercent: 50, opacity: 0 }, {
+      yPercent: 0, opacity: 1, duration: duration, ease: ease
+    });
+    gsap.fromTo('.details p', { yPercent: 50, opacity: 0 }, {
+      yPercent: 0, opacity: 1, duration: duration, ease: ease, delay: 0.1
+    });
+ }, [currentIndex, isMobile, prefersReducedMotion]);
 
   const goToSlide = (index) => {
     const newIndex = (index + totalCocktails) % totalCocktails;
@@ -98,7 +113,12 @@ const Menu = () => {
         </div>
 
         <div className="cocktail">
-          <img src={currentCocktail.image} className="object-contain" />
+          <img 
+            src={currentCocktail.image} 
+            className="object-contain will-change-transform" 
+            loading="lazy"
+            alt={currentCocktail.name}
+          />
         </div>
 
         <div className="recipe">
